@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+import start
 
 pygame.init()
 
@@ -13,11 +14,41 @@ ball_types = [
     {"gravity": 0.5, "bounce": -0.5, "radius": 25, "color": (50,100,50)}, #normal ball
     {"gravity": 0.3, "bounce": -0.7, "radius": 15, "color": (50,50,100)}, #light ball
 ]
+
+#Please read this and get offended if you are a RCB fan or enjoy the scorecard if you are just a cricket fan.
+wickets = [
+    {"runs":1, "batsman": "Virat Kohli", "over": 0.3},
+    {"runs":2, "batsman": "Mandeep Singh", "over": 1.2},
+    {"runs":12, "batsman": "AB de Villiers", "over": 2.3},
+    {"runs":24, "batsman": "Kedar Jadhav", "over": 4.1},
+    {"runs":40, "batsman": "Chris Gayle", "over": 6.2},
+    {"runs":40, "batsman": "Straut Binny", "over": 6.5},
+    {"runs":42, "batsman": "Pawan Negi", "over": 7.3},
+    {"runs":44, "batsman": "Samuel Badree", "over": 8.3},
+    {"runs": 48, "batsman": "Tymal Mills", "over": 9.1},
+    {"runs": 49, "batsman": "Yuzendra Chahal", "over": 9.4},
+]
+
+#Here are some suprises for you if you are an Rcb fan or Barcelona fan,please accept this gift from an srh/real madrid fan like me.Please laugh
+milestones = [
+    {"score": 28, "message": "Reminds me of 2-8 of Barcelona vs FC Bayern Munich in 2020 UCL quarterfinals"},
+    {"score": 49, "message": "NOT AGAIN! we remember 49/10 vs kkr in 2017 IPL"},
+    {"score": 70, "message": "IT HAS BEEN 13 YEARS SINCE 0-7 OF BARCA VS BAYERN"},
+    {"score": 287, "message": "It hurts to get bashed at home by a rival"},
+]
+
 balls = []
 
+time_limit = 49 #rcb's fav score to make this game more fun :).please be offended,i love to offend rcb fans(i am srh fan btw)
+start_ticks = pygame.time.get_ticks() #time in milliseconds since the fun will start
 running = True
 while running:
     for event in pygame.event.get():
+        elasped_seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+        time_left = time_limit - elasped_seconds
+
+        if time_left <= 0:
+            running = False
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
