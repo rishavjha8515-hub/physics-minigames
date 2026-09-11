@@ -20,6 +20,9 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0})
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                balls.clear()        
 
     for ball in balls:
         ball["velocity_y"] += gravity
@@ -52,7 +55,6 @@ while running:
               ball1["y"] -= ny * overlap / 2
               ball2["x"] += nx * overlap / 2
               ball2["y"] += ny * overlap / 2
-
 
     screen.fill((0, 0, 0))
     pygame.draw.rect(screen, (0,255,0), (0, 425, WIDTH, 175))
