@@ -1,6 +1,6 @@
 import pygame
 import math
-
+import random
 
 pygame.init()
 
@@ -8,9 +8,9 @@ WIDTH, HEIGHT = 800,600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
-balls = []
-gravity = 0.49
-radius = 25 
+ball_types = [
+    {"gravity": 0.7, "bounce": -0.3, "radius": 35, "color": (100,50,50)}, #heavy ball
+]
 
 running = True
 while running:
