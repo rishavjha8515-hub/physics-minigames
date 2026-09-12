@@ -139,10 +139,10 @@ while running:
     now = pygame.time.get_ticks()
     messages = [m for m in messages if m["until"] > now]
     for i, m in enumerate(messages[-6:]):
-        text_surface = font.render(m["text"], True, (289,225,256))
+        text_surface = font.render(m["text"], True, (169,225,196))
         screen.blit(text_surface, (10, 10 + i * 26))
 
-    score_surface = font.render(f"Score: {score}  Time left: {max(0, int(time_left))}", True, (225,256,0))
+    score_surface = font.render(f"Score: {score}  Time left: {max(0, int(time_left))}", True, (255,255,0))
     screen.blit(score_surface, (10, HEIGHT - 20))
     pygame.display.flip()
     clock.tick(75)
