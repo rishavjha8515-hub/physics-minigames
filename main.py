@@ -38,27 +38,62 @@ milestones = [
 ]
 
 balls = []
+score = 0
+current_guess = None
+last_gravity = None
+next_type = random.choice(ball_types)
+announced_milestones = []
 
 time_limit = 49 #rcb's fav score to make this game more fun :).please be offended,i love to offend rcb fans(i am srh fan btw)
 start_ticks = pygame.time.get_ticks() #time in milliseconds since the fun will start
 running = True
 while running:
     for event in pygame.event.get():
-        elasped_seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-        time_left = time_limit - elasped_seconds
-
-        if time_left <= 0:
-            running = False
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                chosen_type = random.choice(ball_types)
-                balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0, "gravity": chosen_type["gravity"], "bounce": chosen_type["bounce"], "radius": chosen_type["radius"], "color": chosen_type["color"]})
+                
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
-                balls.clear()        
+                balls.clear() 
+                score = 0
+                announced_milestones = []
+            if event.key == pygame.K_t:
+                current_guess = "faster"  
+            if event.key == pygame.K_d:
+                current_guess = "slower"
 
+        if event.type == pygame.MOUSEBUTTONUP:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            if current_guess is not None and last_gravity is not None:
+                 actually_gravity = next_type["gravity"] > last_gravity
+                 guessed_faster = current_guess == "faster"
+                 if guessed_faster == actually_gravity:
+                     score += 10
+                     print("Someone is getting smarter! Score:", score)
+                 else:
+                     print("I didn't expect that! Score:", score)   
+            else:
+                print("Did you press anything? Score:", score) 
+
+            balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0, "gravity": next_type["gravity"], "bounce": next_type["bounce"], "radius": next_type["radius"], "color": next_type["color"]})
+
+ ##Fun thing: if you throw 3-4 ball continously in the same direction,they will collide and start juggling on thier own.I will suggest you to try this.It was satisfying to watch
+            last_gravity =  next_type["gravity"]
+            next_type = random.choice(ball_types)
+            current_guess = None
+
+    for m in milestones:
+        if score >= m["score"] and m["message"] not in announced_milestones:
+            print("MILESTONE:", m["message"])
+            announced_milestones.append(m["message"])
+
+    elasped_seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+    time_left = time_limit - elasped_seconds
+    if time_left <= 0:
+        running = False
+
+             
     for ball in balls:
         ball["velocity_y"] += ball["gravity"]
         ball["y"] += ball["velocity_y"]
