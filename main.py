@@ -9,6 +9,14 @@ WIDTH, HEIGHT = 800,600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
+font = pygame.font.Font(None, 26)
+messages = []
+MESSAGE_LIFETIME = 2600
+
+def show_message(text):
+    """Replacement for print() - queues text to be drawn on the screen."""
+    messages.append({"text": text, "until": pygame.time.get_ticks() + MESSAGE_LIFETIME})
+
 ball_types = [
     {"gravity": 0.7, "bounce": -0.3, "radius": 35, "color": (100,50,50)}, #heavy ball
     {"gravity": 0.5, "bounce": -0.5, "radius": 25, "color": (50,100,50)}, #normal ball
@@ -70,11 +78,11 @@ while running:
                  guessed_faster = current_guess == "faster"
                  if guessed_faster == actually_gravity:
                      score += 10
-                     print("Someone is getting smarter! Score:", score)
+                     show_message(f"Someone is getting smarter! Score: {score}")
                  else:
-                     print("I didn't expect that! Score:", score)   
+                     show_message(f"I didn't expect that! Score: {score}")   
             else:
-                print("Did you press anything? Score:", score) 
+                show_message(f"Did you press anything? Score: {score}") 
 
             balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0, "gravity": next_type["gravity"], "bounce": next_type["bounce"], "radius": next_type["radius"], "color": next_type["color"]})
 
@@ -85,7 +93,7 @@ while running:
 
     for m in milestones:
         if score >= m["score"] and m["message"] not in announced_milestones:
-            print("MILESTONE:", m["message"])
+            show_message(f"MILESTONE: {m['message']}")
             announced_milestones.append(m["message"])
 
     elasped_seconds = (pygame.time.get_ticks() - start_ticks) / 1000
@@ -128,6 +136,14 @@ while running:
     pygame.draw.rect(screen, (0,255,0), (0, 425, WIDTH, 175))
     for ball in balls:
         pygame.draw.circle(screen, ball["color"], (ball["x"], int(ball["y"])), ball["radius"])
+    now = pygame.time.get_ticks()
+    messages = [m for m in messages if m["until"] > now]
+    for i, m in enumerate(messages[-6:]):
+        text_surface = font.render(m["text"], True, (289,225,256))
+        screen.blit(text_surface, (10, 10 + i * 26))
+
+    score_surface = font.render(f"Score: {score}  Time left: {max(0, int(time_left))}", True, (225,256,0))
+    screen.blit(score_surface, (10, HEIGHT - 20))
     pygame.display.flip()
     clock.tick(75)
 
