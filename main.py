@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-import start
+import start #It was necessary here since i wasn't able to run the code to test
 
 pygame.init()
 
@@ -18,9 +18,9 @@ def show_message(text):
     messages.append({"text": text, "until": pygame.time.get_ticks() + MESSAGE_LIFETIME})
 
 ball_types = [
-    {"gravity": 0.7, "bounce": -0.3, "radius": 35, "color": (100,50,50)}, #heavy ball
-    {"gravity": 0.5, "bounce": -0.5, "radius": 25, "color": (50,100,50)}, #normal ball
-    {"gravity": 0.3, "bounce": -0.7, "radius": 15, "color": (50,50,100)}, #light ball
+    {"gravity": 0.7, "bounce": -0.3, "radius": 35, "color": (100,50,50), "label": "Heavy"},
+    {"gravity": 0.5, "bounce": -0.5, "radius": 25, "color": (50,100,50), "label": "Normal"},
+    {"gravity": 0.3, "bounce": -0.7, "radius": 15, "color": (50,50,100), "label": "Light"},
 ]
 
 #Please read this and get offended if you are a RCB fan or enjoy the scorecard if you are just a cricket fan.
@@ -44,6 +44,7 @@ milestones = [
     {"score": 70, "message": "IT HAS BEEN 13 YEARS SINCE 0-7 OF BARCA VS BAYERN"},
     {"score": 287, "message": "It hurts to get bashed at home by a rival"},
 ]
+#try to reach 290 score and then enjoy the choas the balls will create
 
 balls = []
 score = 0
@@ -84,7 +85,7 @@ while running:
             else:
                 show_message(f"Did you press anything? Score: {score}") 
 
-            balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0, "gravity": next_type["gravity"], "bounce": next_type["bounce"], "radius": next_type["radius"], "color": next_type["color"]})
+            balls.append({"x": mouse_x, "y": mouse_y, "velocity_y": 0, "velocity_x": 0, "gravity": next_type["gravity"], "bounce": next_type["bounce"], "radius": next_type["radius"], "color": next_type["color"], "label": next_type["label"]})
 
  ##Fun thing: if you throw 3-4 ball continously in the same direction,they will collide and start juggling on thier own.I will suggest you to try this.It was satisfying to watch
             last_gravity =  next_type["gravity"]
@@ -136,6 +137,8 @@ while running:
     pygame.draw.rect(screen, (0,255,0), (0, 425, WIDTH, 175))
     for ball in balls:
         pygame.draw.circle(screen, ball["color"], (ball["x"], int(ball["y"])), ball["radius"])
+        text_surface = font.render(ball["label"], True, (231,232,233))
+        screen.blit(text_surface, (ball["x"], ball["y"] - ball["radius"] - 20))
     now = pygame.time.get_ticks()
     messages = [m for m in messages if m["until"] > now]
     for i, m in enumerate(messages[-6:]):
