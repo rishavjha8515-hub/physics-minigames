@@ -52,6 +52,8 @@ current_guess = None
 last_gravity = None
 next_type = random.choice(ball_types)
 announced_milestones = []
+game_state = "normal"
+challenge_timer = 0
 
 time_limit = 49 #rcb's fav score to make this game more fun :).please be offended,i love to offend rcb fans(i am srh fan btw)
 start_ticks = pygame.time.get_ticks() #time in milliseconds since the fun will start
@@ -71,7 +73,16 @@ while running:
             if event.key == pygame.K_d:
                 current_guess = "slower"
 
-        if event.type == pygame.MOUSEBUTTONUP:
+        if event.type == pygame.MOUSEBUTTONUP and game_state == "catch_challenge":
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            distance_to_ball = math.sqrt((mouse_x - catch_ball_x)**2 + (mouse_y - catch_ball_y)**2)
+
+            if distance_to_ball < 29:
+                score += 26
+                show_message(f"STRONG NERVES! +26 Score: {score}")
+                game_state = "normal"
+
+        elif event.type == pygame.MOUSEBUTTONUP:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
             if current_guess is not None and last_gravity is not None:
@@ -102,6 +113,30 @@ while running:
     if time_left <= 0:
         running = False
 
+#instead of generic end/start animations,i am going with two challenges which will randomly come
+    if game_state == "normal" and random.random() < 0.001:
+        game_state = "catch_challenge"
+        challenge_timer = pygame.time.get_ticks()
+        catch_ball_x = random.randint(52, WIDTH - 51)
+        catch_ball_y = 0
+        catch_ball_speed = 8.41
+        caught = False
+
+    if game_state == "catch_challenge":
+        catch_ball_y += catch_ball_speed
+
+        if catch_ball_y > HEIGHT:
+            game_state = "normal"
+            show_message("Someone needs to practice a lot")
+
+        screen.fill((20, 0, 0))
+        pygame.draw.circle(screen, (255,215,0), (catch_ball_x, int(catch_ball_y)), 20)
+        catch_text = font.render("ARE YOUR NERVES STRONG?IF STRONG,CATCH THE GOLD BALL!", True, (144,196,225))
+        screen.blit(catch_text, (WIDTH // 2 - 150, 30))
+        pygame.display.flip()
+        clock.tick(75)
+        continue
+#I apologize but even i don't know when it will come,watch out for it
              
     for ball in balls:
         ball["velocity_y"] += ball["gravity"]
