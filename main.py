@@ -1,7 +1,6 @@
 import pygame
 import math
 import random
-import start #It was necessary here since i wasn't able to run the code to test
 
 pygame.init()
 
