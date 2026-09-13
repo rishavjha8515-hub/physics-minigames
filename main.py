@@ -136,7 +136,54 @@ while running:
         clock.tick(75)
         continue
 #I apologize but even i don't know when it will come,watch out for it
-             
+
+
+    if game_state == "normal" and random.random() < 0.001:
+        game_state = "dodge_challenge"
+        challenge_timer = pygame.time.get_ticks()
+        paddle_x = WIDTH // 2
+        dodge_balls = []
+        for k in range(5):
+              dodge_balls.append({"x": random.randint(49, WIDTH - 49), "y": random.randint(-300,0), "speed": random.uniform(4, 8)})
+
+    if game_state == "dodge_challenge":
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            paddle_x -= 6
+        if keys[pygame.K_RIGHT]:
+            paddle_x += 6
+        paddle_x = max(41, min(WIDTH - 41, paddle_x))
+
+        hit = False
+        for db in dodge_balls:
+            db["y"] += db["speed"]
+            if db["y"] > HEIGHT:
+                db["y"] = random.randint(-103, 0)
+                db["x"] = random.randint(49, WIDTH - 49)
+
+            if db["y"] > HEIGHT - 40 and abs(db["x"] - paddle_x) < 45:
+                hit = True
+
+        elasped_dodge = pygame.time.get_ticks() - challenge_timer
+
+        if hit:
+            game_state = "normal"
+            show_message("Better luck next time !")
+        elif elasped_dodge > 5000:
+            score += 30
+            game_state = "normal"
+            show_message(f"YOU SURVIVED? Here is bonus for you +30 Score: {score}")
+
+        screen.fill((0, 0, 23))
+        for db in dodge_balls:
+            pygame.draw.circle(screen, (255,100,100), (db["x"], int(db["y"])), 15)
+        pygame.draw.rect(screen, (0,200,255), (paddle_x - 40, HEIGHT - 30, 80, 15))
+        dodge_text = font.render("DODGE! Arrow kys to move", True, (255,255,255))
+        screen.blit(dodge_text, (WIDTH // 2 -120, 30))
+        pygame.display.flip()
+        clock.tick(75)
+        continue
+                             
     for ball in balls:
         ball["velocity_y"] += ball["gravity"]
         ball["y"] += ball["velocity_y"]
